@@ -15,14 +15,15 @@
 
 @implementation PNLineChartDataItem
 
-+ (PNLineChartDataItem *)dataItemWithY:(CGFloat)y
++ (PNLineChartDataItem*)dataItemWithY:(CGFloat)y
 {
     return [[PNLineChartDataItem alloc] initWithY:y];
 }
 
 - (id)initWithY:(CGFloat)y
 {
-    if ((self = [super init])) {
+    if ((self = [super init]))
+    {
         self.y = y;
     }
 

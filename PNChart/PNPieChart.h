@@ -9,26 +9,35 @@
 #import <UIKit/UIKit.h>
 #import "PNPieChartDataItem.h"
 
+typedef enum
+{
+    PNPieChartLabelPositionOuter = 0,
+    PNPieChartLabelPositionInner = 1
+} PNPieChartLabelPosition;
+
 @interface PNPieChart : UIView
 
-- (id)initWithFrame:(CGRect)frame items:(NSArray *)items;
+- (id)initWithFrame:(CGRect)frame items:(NSArray*)items;
 
-@property (nonatomic, readonly) NSArray	*items;
+@property (nonatomic, strong) NSArray* items;
 
 /** Default is 18-point Avenir Medium. */
-@property (nonatomic) UIFont  *descriptionTextFont;
+@property (nonatomic) UIFont* descriptionTextFont;
 
 /** Default is white. */
-@property (nonatomic) UIColor *descriptionTextColor;
+@property (nonatomic) UIColor* descriptionTextColor;
 
 /** Default is black, with an alpha of 0.4. */
-@property (nonatomic) UIColor *descriptionTextShadowColor;
+@property (nonatomic) UIColor* descriptionTextShadowColor;
 
 /** Default is CGSizeMake(0, 1). */
-@property (nonatomic) CGSize   descriptionTextShadowOffset;
+@property (nonatomic) CGSize descriptionTextShadowOffset;
 
 /** Default is 1.0. */
 @property (nonatomic) NSTimeInterval duration;
+
+/** Default is PNPieChartLabelPositionInner */
+@property (nonatomic) PNPieChartLabelPosition labelPosition;
 
 - (void)strokeChart;
 

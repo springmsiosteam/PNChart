@@ -5,7 +5,8 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSUInteger, PNLineChartPointStyle) {
+typedef NS_ENUM(NSUInteger, PNLineChartPointStyle)
+{
     PNLineChartPointStyleNone = 0,
     PNLineChartPointStyleCircle = 1,
     PNLineChartPointStyleSquare = 3,
@@ -14,11 +15,11 @@ typedef NS_ENUM(NSUInteger, PNLineChartPointStyle) {
 
 @class PNLineChartDataItem;
 
-typedef PNLineChartDataItem *(^LCLineChartDataGetter)(NSUInteger item);
+typedef PNLineChartDataItem* (^LCLineChartDataGetter)(NSUInteger item);
 
 @interface PNLineChartData : NSObject
 
-@property (strong) UIColor *color;
+@property (strong) UIColor* color;
 @property (nonatomic) CGFloat alpha;
 @property NSUInteger itemCount;
 @property (copy) LCLineChartDataGetter getData;

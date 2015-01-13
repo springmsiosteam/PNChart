@@ -5,10 +5,9 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface PNLineChartDataItem : NSObject
 
-+ (PNLineChartDataItem *)dataItemWithY:(CGFloat)y;
++ (PNLineChartDataItem*)dataItemWithY:(CGFloat)y;
 
 @property (readonly) CGFloat y; // should be within the y range
 

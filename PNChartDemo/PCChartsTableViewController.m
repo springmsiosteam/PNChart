@@ -11,39 +11,42 @@
 @implementation PCChartsTableViewController
 
 // In a story board-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)prepareForSegue:(UIStoryboardSegue*)segue sender:(id)sender
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 
-    UIViewController * viewController = [segue destinationViewController];
+    UIViewController* viewController = [segue destinationViewController];
 
-    if ([segue.identifier isEqualToString:@"lineChart"]) {
+    if ([segue.identifier isEqualToString:@"lineChart"])
+    {
 
-        //Add line chart
+        // Add line chart
 
         viewController.title = @"Line Chart";
-
-    } else if ([segue.identifier isEqualToString:@"barChart"])
+    }
+    else if ([segue.identifier isEqualToString:@"barChart"])
     {
-        //Add bar chart
+        // Add bar chart
 
         viewController.title = @"Bar Chart";
-    } else if ([segue.identifier isEqualToString:@"circleChart"])
+    }
+    else if ([segue.identifier isEqualToString:@"circleChart"])
     {
-        //Add circle chart
+        // Add circle chart
 
         viewController.title = @"Circle Chart";
-
-    } else if ([segue.identifier isEqualToString:@"pieChart"])
+    }
+    else if ([segue.identifier isEqualToString:@"pieChart"])
     {
-        //Add pie chart
+        // Add pie chart
 
         viewController.title = @"Pie Chart";
-    } else if ([segue.identifier isEqualToString:@"scatterChart"])
+    }
+    else if ([segue.identifier isEqualToString:@"scatterChart"])
     {
-        //Add scatter chart
-        
+        // Add scatter chart
+
         viewController.title = @"Scatter Chart";
     }
 }

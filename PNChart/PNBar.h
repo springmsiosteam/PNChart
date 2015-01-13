@@ -14,10 +14,10 @@
 - (void)rollBack;
 
 @property (nonatomic) float grade;
-@property (nonatomic) CAShapeLayer *chartLine;
-@property (nonatomic) UIColor *barColor;
-@property (nonatomic) UIColor *barColorGradientStart;
+@property (nonatomic) CAShapeLayer* chartLine;
+@property (nonatomic) UIColor* barColor;
+@property (nonatomic) UIColor* barColorGradientStart;
 @property (nonatomic) CGFloat barRadius;
-@property (nonatomic) CAShapeLayer *gradientMask;
+@property (nonatomic) CAShapeLayer* gradientMask;
 
 @end

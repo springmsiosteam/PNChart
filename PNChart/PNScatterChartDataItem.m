@@ -19,18 +19,19 @@
 
 @implementation PNScatterChartDataItem
 
-+ (PNScatterChartDataItem *)dataItemWithX:(CGFloat)x AndWithY:(CGFloat)y
++ (PNScatterChartDataItem*)dataItemWithX:(CGFloat)x AndWithY:(CGFloat)y
 {
     return [[PNScatterChartDataItem alloc] initWithX:x AndWithY:y];
 }
 
 - (id)initWithX:(CGFloat)x AndWithY:(CGFloat)y
 {
-    if ((self = [super init])) {
+    if ((self = [super init]))
+    {
         self.x = x;
         self.y = y;
     }
-    
+
     return self;
 }
 

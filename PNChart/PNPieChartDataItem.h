@@ -10,15 +10,12 @@
 
 @interface PNPieChartDataItem : NSObject
 
-+ (instancetype)dataItemWithValue:(CGFloat)value
-                            color:(UIColor*)color;
++ (instancetype)dataItemWithValue:(CGFloat)value color:(UIColor*)color;
 
-+ (instancetype)dataItemWithValue:(CGFloat)value
-                            color:(UIColor*)color
-                      description:(NSString *)description;
++ (instancetype)dataItemWithValue:(CGFloat)value color:(UIColor*)color description:(NSString*)description;
 
-@property (nonatomic) CGFloat   value;
-@property (nonatomic) UIColor  *color;
-@property (nonatomic) NSString *textDescription;
+@property (nonatomic) CGFloat value;
+@property (nonatomic) UIColor* color;
+@property (nonatomic) NSString* textDescription;
 
 @end
