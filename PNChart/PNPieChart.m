@@ -36,6 +36,22 @@
 
 @implementation PNPieChart
 
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        _items = [NSArray array];
+
+        _descriptionTextColor = [UIColor whiteColor];
+        _descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:18.0];
+        _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
+        _descriptionTextShadowOffset = CGSizeMake(0, 1);
+        _duration = 1.0;
+    }
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame items:(NSArray*)items
 {
     self = [self initWithFrame:frame];
@@ -48,7 +64,6 @@
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
-        self.backgroundColor = [UIColor purpleColor];
     }
 
     return self;
@@ -59,8 +74,13 @@
     _currentTotal = 0;
     _total = 0;
 
-    _outerCircleRadius = CGRectGetWidth(self.bounds) / 2;
-    _innerCircleRadius = 0; // CGRectGetWidth(self.bounds) / 4;
+    _outerCircleRadius = MIN(self.bounds.size.height, self.bounds.size.width) / 2;
+
+    _innerCircleRadius = 0;
+    if (_chartType)
+    {
+        _innerCircleRadius = (_outerCircleRadius / 2);
+    }
 
     [_contentView removeFromSuperview];
     _contentView = [[UIView alloc] initWithFrame:self.bounds];
@@ -74,7 +94,7 @@
 
 #pragma mark -
 
-- (void)strokeChart
+- (void)strokeChart:(BOOL)animated
 {
     [self loadDefault];
 
@@ -85,7 +105,7 @@
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
-            _outerCircleRadius -= [_descriptionTextFont pointSize] + 5;
+            _outerCircleRadius -= [_descriptionTextFont pointSize] + 20;
             break;
 
         default:
@@ -114,7 +134,8 @@
         currentValue += currentItem.value;
     }
 
-    [self maskChart];
+    if (animated)
+        [self maskChart];
 
     currentValue = 0;
     for (int i = 0; i < _items.count; i++)
@@ -164,7 +185,15 @@
             break;
 
         default:
-            distance = _innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2;
+            if (_chartType == PNPieChartTypeDonut)
+            {
+                distance = _innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2;
+            }
+            else
+            {
+                distance = _outerCircleRadius - (_outerCircleRadius / 5);
+            }
+
             break;
     }
 
@@ -175,7 +204,7 @@
     descriptionLabel.textAlignment = NSTextAlignmentCenter;
     descriptionLabel.center = CGPointMake(chartCenter.x + distance * sin(rad), chartCenter.y - distance * cos(rad));
     ;
-    descriptionLabel.alpha = 0;
+    descriptionLabel.alpha = 1;
     descriptionLabel.backgroundColor = [UIColor clearColor];
     return descriptionLabel;
 }

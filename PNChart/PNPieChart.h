@@ -15,6 +15,12 @@ typedef enum
     PNPieChartLabelPositionInner = 1
 } PNPieChartLabelPosition;
 
+typedef enum
+{
+    PNPieChartTypePie = 0,
+    PNPieChartTypeDonut = 1
+} PNPieChartType;
+
 @interface PNPieChart : UIView
 
 - (id)initWithFrame:(CGRect)frame items:(NSArray*)items;
@@ -39,6 +45,9 @@ typedef enum
 /** Default is PNPieChartLabelPositionInner */
 @property (nonatomic) PNPieChartLabelPosition labelPosition;
 
-- (void)strokeChart;
+/** Default is PNPieChartTypePie */
+@property (nonatomic) PNPieChartType chartType;
+
+- (void)strokeChart:(BOOL)animated;
 
 @end
