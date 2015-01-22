@@ -162,19 +162,13 @@
 
     _currentTotal += currentDataItem.value;
 
+    descriptionLabel.text = titleText;
     if (!titleText)
     {
         titleText = [NSString stringWithFormat:@"%.0f%%", currentDataItem.value / _total * 100];
         descriptionLabel.text = titleText;
     }
-    else
-    {
-        NSString* str = [NSString stringWithFormat:@"%.0f%%\n", currentDataItem.value / _total * 100];
-        str = [str stringByAppendingString:titleText];
-        descriptionLabel.text = str;
-    }
 
-    descriptionLabel.font = _descriptionTextFont;
     CGSize labelSize = [descriptionLabel.text sizeWithAttributes:@{ NSFontAttributeName : descriptionLabel.font }];
     descriptionLabel.frame = CGRectMake(descriptionLabel.frame.origin.x, descriptionLabel.frame.origin.y,
                                         descriptionLabel.frame.size.width, labelSize.height);
@@ -199,11 +193,8 @@
 
     descriptionLabel.numberOfLines = 0;
     descriptionLabel.textColor = _descriptionTextColor;
-    descriptionLabel.shadowColor = _descriptionTextShadowColor;
-    descriptionLabel.shadowOffset = _descriptionTextShadowOffset;
     descriptionLabel.textAlignment = NSTextAlignmentCenter;
     descriptionLabel.center = CGPointMake(chartCenter.x + distance * sin(rad), chartCenter.y - distance * cos(rad));
-    ;
     descriptionLabel.alpha = 1;
     descriptionLabel.backgroundColor = [UIColor clearColor];
     return descriptionLabel;
