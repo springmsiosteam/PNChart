@@ -155,15 +155,18 @@
         currentValue += currentItem.value;
     }
 
-    currentValue = 0;
-    _currentTotal = 0;
-    for (int i = 0; i < _items.count; i++)
+    if (self.labelPosition != PNPieChartLabelPositionNone)
     {
-        currentItem = [self dataItemForIndex:i];
-        UILabel* descriptionLabel = [self descriptionLabelForItemAtIndex:i];
-        [_contentView addSubview:descriptionLabel];
-        currentValue += currentItem.value;
-        [_descriptionLabels addObject:descriptionLabel];
+        currentValue = 0;
+        _currentTotal = 0;
+        for (int i = 0; i < _items.count; i++)
+        {
+            currentItem = [self dataItemForIndex:i];
+            UILabel* descriptionLabel = [self descriptionLabelForItemAtIndex:i];
+            [_contentView addSubview:descriptionLabel];
+            currentValue += currentItem.value;
+            [_descriptionLabels addObject:descriptionLabel];
+        }
     }
 }
 
@@ -179,11 +182,6 @@
     CGPoint chartCenter = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
 
     _currentTotal += currentDataItem.value;
-
-    if (!titleText)
-    {
-        titleText = [NSString stringWithFormat:@"%.0f%%", currentDataItem.value / _total * 100];
-    }
 
     CGSize labelSize = [titleText sizeWithAttributes:@{ NSFontAttributeName : [UIFont systemFontOfSize:14] }];
 

@@ -11,8 +11,9 @@
 
 typedef enum
 {
-    PNPieChartLabelPositionOuter = 0,
-    PNPieChartLabelPositionInner = 1
+    PNPieChartLabelPositionNone = 0,
+    PNPieChartLabelPositionOuter = 1,
+    PNPieChartLabelPositionInner = 2
 } PNPieChartLabelPosition;
 
 typedef enum
