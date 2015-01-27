@@ -30,7 +30,8 @@
                                 fillColor:(UIColor*)fillColor
                               borderColor:(UIColor*)borderColor
                           startPercentage:(CGFloat)startPercentage
-                            endPercentage:(CGFloat)endPercentage;
+                            endPercentage:(CGFloat)endPercentage
+                                    index:(NSUInteger)index;
 
 @end
 
@@ -48,6 +49,7 @@
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
+        self.selectedIndex = -1;
     }
     return self;
 }
@@ -115,6 +117,8 @@
 
     PNPieChartDataItem* currentItem;
     CGFloat currentValue = 0;
+    _currentTotal = 0;
+
     for (int i = 0; i < _items.count; i++)
     {
         currentItem = [self dataItemForIndex:i];
@@ -128,16 +132,31 @@
                                  fillColor:[UIColor clearColor]
                                borderColor:currentItem.color
                            startPercentage:startPercnetage
-                             endPercentage:endPercentage];
+                             endPercentage:endPercentage
+                                     index:i];
+        [_pieLayer addSublayer:currentPieLayer];
+
+        if (i == self.selectedIndex)
+        {
+            CAShapeLayer* shadown =
+                [self shadowCircleLayerWithRadius:_innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2
+                                      borderWidth:_outerCircleRadius - _innerCircleRadius
+                                        fillColor:[UIColor clearColor]
+                                      borderColor:currentItem.color
+                                  startPercentage:startPercnetage
+                                    endPercentage:endPercentage
+                                            index:i];
+            [_pieLayer addSublayer:shadown];
+        }
+
+        _currentTotal += currentItem.value;
         [_pieLayer addSublayer:currentPieLayer];
 
         currentValue += currentItem.value;
     }
 
-    if (animated)
-        [self maskChart];
-
     currentValue = 0;
+    _currentTotal = 0;
     for (int i = 0; i < _items.count; i++)
     {
         currentItem = [self dataItemForIndex:i];
@@ -152,7 +171,6 @@
 {
     PNPieChartDataItem* currentDataItem = [self dataItemForIndex:index];
 
-    UILabel* descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 80)];
     NSString* titleText = currentDataItem.textDescription;
 
     CGFloat distance = 0.0f;
@@ -162,41 +180,44 @@
 
     _currentTotal += currentDataItem.value;
 
-    descriptionLabel.text = titleText;
     if (!titleText)
     {
         titleText = [NSString stringWithFormat:@"%.0f%%", currentDataItem.value / _total * 100];
-        descriptionLabel.text = titleText;
     }
 
-    CGSize labelSize = [descriptionLabel.text sizeWithAttributes:@{ NSFontAttributeName : descriptionLabel.font }];
-    descriptionLabel.frame = CGRectMake(descriptionLabel.frame.origin.x, descriptionLabel.frame.origin.y,
-                                        descriptionLabel.frame.size.width, labelSize.height);
+    CGSize labelSize = [titleText sizeWithAttributes:@{ NSFontAttributeName : [UIFont systemFontOfSize:14] }];
+
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
-            distance = _outerCircleRadius + (labelSize.width / 2) + 5;
+            distance = _outerCircleRadius + (labelSize.width / 2) + 5 + (index == self.selectedIndex ? 15 : 0);
             break;
 
         default:
             if (_chartType == PNPieChartTypeDonut)
             {
-                distance = _innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2;
+                distance = (index == self.selectedIndex ? 15 : 0) + _innerCircleRadius
+                           + (_outerCircleRadius - _innerCircleRadius) / 2;
             }
             else
             {
-                distance = _outerCircleRadius - (_outerCircleRadius / 5);
+                distance = (index == self.selectedIndex ? 15 : 0) + _outerCircleRadius - (_outerCircleRadius / 5);
             }
 
             break;
     }
 
+    CGPoint center = CGPointMake(chartCenter.x + distance * sin(rad), chartCenter.y - distance * cos(rad));
+    UILabel* descriptionLabel =
+        [[UILabel alloc] initWithFrame:CGRectMake(center.x, center.y, labelSize.width, labelSize.height)];
     descriptionLabel.numberOfLines = 0;
     descriptionLabel.textColor = _descriptionTextColor;
     descriptionLabel.textAlignment = NSTextAlignmentCenter;
-    descriptionLabel.center = CGPointMake(chartCenter.x + distance * sin(rad), chartCenter.y - distance * cos(rad));
     descriptionLabel.alpha = 1;
     descriptionLabel.backgroundColor = [UIColor clearColor];
+    descriptionLabel.text = titleText;
+    descriptionLabel.font = [UIFont systemFontOfSize:14];
+    descriptionLabel.center = center;
     return descriptionLabel;
 }
 
@@ -213,12 +234,25 @@
                               borderColor:(UIColor*)borderColor
                           startPercentage:(CGFloat)startPercentage
                             endPercentage:(CGFloat)endPercentage
+                                    index:(NSUInteger)index
 {
     CAShapeLayer* circle = [CAShapeLayer layer];
 
+    PNPieChartDataItem* currentDataItem = [self dataItemForIndex:index];
+
     CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
 
-    UIBezierPath* path = [UIBezierPath bezierPathWithArcCenter:center
+    CGFloat distance = 0;
+    if (index == self.selectedIndex)
+    {
+        distance += 10.0f;
+    }
+
+    CGFloat centerPercentage = (_currentTotal + currentDataItem.value / 2) / _total;
+    CGFloat rad = centerPercentage * 2 * M_PI;
+    CGPoint newCenter = CGPointMake(center.x + distance * sin(rad), center.y - distance * cos(rad));
+
+    UIBezierPath* path = [UIBezierPath bezierPathWithArcCenter:newCenter
                                                         radius:radius
                                                     startAngle:-M_PI_2
                                                       endAngle:M_PI_2 * 3
@@ -230,6 +264,47 @@
     circle.strokeEnd = endPercentage;
     circle.lineWidth = borderWidth;
     circle.path = path.CGPath;
+    return circle;
+}
+
+- (CAShapeLayer*)shadowCircleLayerWithRadius:(CGFloat)radius
+                                 borderWidth:(CGFloat)borderWidth
+                                   fillColor:(UIColor*)fillColor
+                                 borderColor:(UIColor*)borderColor
+                             startPercentage:(CGFloat)startPercentage
+                               endPercentage:(CGFloat)endPercentage
+                                       index:(NSUInteger)index
+{
+    CAShapeLayer* circle = [CAShapeLayer layer];
+
+    PNPieChartDataItem* currentDataItem = [self dataItemForIndex:index];
+
+    CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+
+    CGFloat distance = 15.0f;
+    CGFloat centerPercentage = (_currentTotal + currentDataItem.value / 2) / _total;
+    CGFloat rad = centerPercentage * 2 * M_PI;
+    CGPoint newCenter = CGPointMake(center.x + distance * sin(rad), center.y - distance * cos(rad));
+
+    UIBezierPath* path = [UIBezierPath bezierPathWithArcCenter:newCenter
+                                                        radius:radius
+                                                    startAngle:-M_PI_2
+                                                      endAngle:M_PI_2 * 3
+                                                     clockwise:YES];
+
+    circle.fillColor = fillColor.CGColor;
+    circle.strokeColor = [UIColor darkGrayColor].CGColor;
+    circle.strokeStart = startPercentage;
+    circle.strokeEnd = endPercentage;
+    circle.lineWidth = borderWidth + 3;
+    circle.opacity = 0.1;
+
+    circle.path = path.CGPath;
+
+    CIFilter* blur = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [blur setDefaults];
+    [blur setValue:[NSNumber numberWithFloat:10.0] forKey:@"inputRadius"];
+    circle.backgroundFilters = [NSArray arrayWithObject:blur];
 
     return circle;
 }
@@ -242,7 +317,8 @@
                              fillColor:[UIColor clearColor]
                            borderColor:[UIColor blackColor]
                        startPercentage:0
-                         endPercentage:1];
+                         endPercentage:1
+                                 index:0];
 
     _pieLayer.mask = maskLayer;
     CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
@@ -276,4 +352,28 @@
         [UIView animateWithDuration:0.2 animations:^() { [obj setAlpha:1]; }];
     }];
 }
+
+- (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
+{
+    if (event.type != UIEventTypeTouches)
+        return;
+
+    CGPoint location = [[touches anyObject] locationInView:_contentView];
+    self.selectedIndex++;
+    if (self.selectedIndex > _items.count)
+        self.selectedIndex = 0;
+
+    [self strokeChart:NO];
+
+    [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CAShapeLayer* obj, NSUInteger idx, BOOL* stop) {
+
+        CGPoint pl = [_contentView.layer convertPoint:location toLayer:obj];
+
+        if (CGPathContainsPoint(obj.path, 0, pl, YES))
+        {
+        }
+
+    }];
+}
+
 @end

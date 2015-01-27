@@ -114,11 +114,11 @@
         ];
 
         self.pieChart =
-            [[PNPieChart alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2.0 - 100, 135, 200.0, 200.0) items:items];
+            [[PNPieChart alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2.0 - 100, 135, 300, 300) items:items];
         self.pieChart.descriptionTextColor = [UIColor whiteColor];
         self.pieChart.descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:11.0];
         self.pieChart.descriptionTextShadowColor = [UIColor clearColor];
-        [self.pieChart strokeChart];
+        [self.pieChart strokeChart:NO];
 
         [self.view addSubview:self.pieChart];
         self.changeValueButton.hidden = YES;

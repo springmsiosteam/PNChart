@@ -50,4 +50,6 @@ typedef enum
 
 - (void)strokeChart:(BOOL)animated;
 
+@property (nonatomic, assign) NSUInteger selectedIndex;
+
 @end
