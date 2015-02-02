@@ -183,7 +183,7 @@
 
     _currentTotal += currentDataItem.value;
 
-    CGSize labelSize = [titleText sizeWithAttributes:@{ NSFontAttributeName : [UIFont systemFontOfSize:14] }];
+    CGSize labelSize = [titleText sizeWithAttributes:@{ NSFontAttributeName : _descriptionTextFont }];
 
     switch (_labelPosition)
     {
@@ -195,7 +195,7 @@
             if (_chartType == PNPieChartTypeDonut)
             {
                 distance = (index == self.selectedIndex ? 15 : 0) + _innerCircleRadius
-                           + (_outerCircleRadius - _innerCircleRadius) / 2;
+                    + (_outerCircleRadius - _innerCircleRadius) / 2;
             }
             else
             {
@@ -214,7 +214,7 @@
     descriptionLabel.alpha = 1;
     descriptionLabel.backgroundColor = [UIColor clearColor];
     descriptionLabel.text = titleText;
-    descriptionLabel.font = [UIFont systemFontOfSize:14];
+    descriptionLabel.font = _descriptionTextFont;
     descriptionLabel.center = center;
     return descriptionLabel;
 }
@@ -347,7 +347,10 @@
 - (void)animationDidStop:(CAAnimation*)anim finished:(BOOL)flag
 {
     [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
-        [UIView animateWithDuration:0.2 animations:^() { [obj setAlpha:1]; }];
+        [UIView animateWithDuration:0.2
+                         animations:^() {
+                             [obj setAlpha:1];
+                         }];
     }];
 }
 
