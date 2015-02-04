@@ -10,6 +10,7 @@
 
 @protocol PNChartDelegate <NSObject>
 @optional
+
 /**
  * Callback method that gets invoked when the user taps on the chart line.
  */
@@ -24,5 +25,10 @@
  * Callback method that gets invoked when the user taps on a chart bar.
  */
 - (void)userClickedOnBarAtIndex:(NSInteger)barIndex;
+
+/**
+ * Callback method that gets invoked when the user taps on a chart bar.
+ */
+- (void)userClickedOnPieSliceAtIndex:(NSInteger)pieSliceIndex;
 
 @end
