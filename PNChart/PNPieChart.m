@@ -356,25 +356,38 @@
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    if (event.type != UIEventTypeTouches)
+    if (event.type != UIEventTypeTouches && [self.delegate respondsToSelector:@selector(userClickedOnPieSliceAtIndex:)])
         return;
 
     CGPoint location = [[touches anyObject] locationInView:_contentView];
-    self.selectedIndex++;
-    if (self.selectedIndex > _items.count)
-        self.selectedIndex = 0;
+    CGPoint chartCenter = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    CGFloat pointRad = (2 * M_PI) - (atan2f(location.x - chartCenter.x, location.y - chartCenter.y) + M_PI);
 
-    [self strokeChart:NO];
+    bool insideCircle = powf(location.x - chartCenter.x, 2) + powf(location.y - chartCenter.y, 2)
+        <= powf(_outerCircleRadius, 2);
 
-    [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CAShapeLayer* obj, NSUInteger idx, BOOL* stop) {
+    if (!insideCircle)
+        return;
 
-        CGPoint pl = [_contentView.layer convertPoint:location toLayer:obj];
+    __block float currentValue = 0;
+    __block NSUInteger clickeIndex = -1;
 
-        if (CGPathContainsPoint(obj.path, 0, pl, YES))
+    [self.items enumerateObjectsUsingBlock:^(PNPieChartDataItem* obj, NSUInteger idx, BOOL* stop) {
+        CGFloat startRad = ((currentValue / _total) * 2 * M_PI);
+        CGFloat endRad = (((currentValue + obj.value) / _total) * 2 * M_PI);
+
+        if (pointRad >= startRad && pointRad <= endRad)
         {
+            *stop = true;
+            clickeIndex = idx;
         }
 
+        currentValue += obj.value;
+
     }];
+
+    if (clickeIndex != -1)
+        [self.delegate userClickedOnPieSliceAtIndex:clickeIndex];
 }
 
 @end

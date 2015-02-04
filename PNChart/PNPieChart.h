@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PNPieChartDataItem.h"
+#import "PNChartDelegate.h"
 
 typedef enum
 {
@@ -22,7 +23,7 @@ typedef enum
     PNPieChartTypeDonut = 1
 } PNPieChartType;
 
-@interface PNPieChart : UIView
+@interface PNPieChart : UIControl
 
 - (id)initWithFrame:(CGRect)frame items:(NSArray*)items;
 
@@ -52,5 +53,7 @@ typedef enum
 - (void)strokeChart:(BOOL)animated;
 
 @property (nonatomic, assign) NSUInteger selectedIndex;
+
+@property (nonatomic, retain) id<PNChartDelegate> delegate;
 
 @end

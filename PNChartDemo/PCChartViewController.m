@@ -120,6 +120,7 @@
         self.pieChart.descriptionTextShadowColor = [UIColor clearColor];
         self.pieChart.labelPosition = PNPieChartLabelPositionInner;
         [self.pieChart strokeChart:NO];
+        self.pieChart.delegate = self;
 
         [self.view addSubview:self.pieChart];
         self.changeValueButton.hidden = YES;
@@ -164,7 +165,7 @@
 - (void)userClickedOnLineKeyPoint:(CGPoint)point lineIndex:(NSInteger)lineIndex pointIndex:(NSInteger)pointIndex
 {
     NSLog(@"Click Key on line %f, %f line index is %d and point index is %d", point.x, point.y, (int)lineIndex,
-          (int)pointIndex);
+        (int)pointIndex);
 }
 
 - (void)userClickedOnLinePoint:(CGPoint)point lineIndex:(NSInteger)lineIndex
@@ -263,6 +264,15 @@
     [bar.layer addAnimation:animation forKey:@"Float"];
 }
 
+- (void)userClickedOnPieSliceAtIndex:(NSInteger)pieSliceIndex
+{
+
+    NSLog(@"Click on PieSlice %@", @(pieSliceIndex));
+
+    [self.pieChart setSelectedIndex:pieSliceIndex];
+    [self.pieChart strokeChart:NO];
+}
+
 /* this function is used only for creating random points */
 - (NSArray*)randomSetOfObjects
 {
@@ -272,14 +282,14 @@
     NSMutableArray* YAr = [NSMutableArray array];
     for (int i = 0; i < 25; i++)
     {
-        [XAr addObject:[NSString stringWithFormat:LabelFormat, (((double)arc4random() / ARC4RANDOM_MAX)
-                                                                * (self.scatterChart.AxisX_maxValue
-                                                                   - self.scatterChart.AxisX_minValue)
-                                                                + self.scatterChart.AxisX_minValue)]];
-        [YAr addObject:[NSString stringWithFormat:LabelFormat, (((double)arc4random() / ARC4RANDOM_MAX)
-                                                                * (self.scatterChart.AxisY_maxValue
-                                                                   - self.scatterChart.AxisY_minValue)
-                                                                + self.scatterChart.AxisY_minValue)]];
+        [XAr addObject:[NSString stringWithFormat:LabelFormat,
+                                 (((double)arc4random() / ARC4RANDOM_MAX) * (self.scatterChart.AxisX_maxValue
+                                                                                - self.scatterChart.AxisX_minValue)
+                                                      + self.scatterChart.AxisX_minValue)]];
+        [YAr addObject:[NSString stringWithFormat:LabelFormat,
+                                 (((double)arc4random() / ARC4RANDOM_MAX) * (self.scatterChart.AxisY_maxValue
+                                                                                - self.scatterChart.AxisY_minValue)
+                                                      + self.scatterChart.AxisY_minValue)]];
     }
     [array addObject:XAr];
     [array addObject:YAr];
