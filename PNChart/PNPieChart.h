@@ -56,4 +56,6 @@ typedef enum
 
 @property (nonatomic, retain) id<PNChartDelegate> delegate;
 
+- (void)loadDefault;
+
 @end

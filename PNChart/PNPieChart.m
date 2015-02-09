@@ -20,8 +20,6 @@
 @property (nonatomic) CAShapeLayer* pieLayer;
 @property (nonatomic) NSMutableArray* descriptionLabels;
 
-- (void)loadDefault;
-
 - (UILabel*)descriptionLabelForItemAtIndex:(NSUInteger)index;
 - (PNPieChartDataItem*)dataItemForIndex:(NSUInteger)index;
 
@@ -168,9 +166,6 @@
             [_descriptionLabels addObject:descriptionLabel];
         }
     }
-
-    if (animated)
-        [self maskChart];
 }
 
 - (UILabel*)descriptionLabelForItemAtIndex:(NSUInteger)index
@@ -345,16 +340,12 @@
 
 - (void)animationDidStop:(CAAnimation*)anim finished:(BOOL)flag
 {
-
-    if ([anim valueForKey:@"strokeEnd"])
-    {
-        [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
-            [UIView animateWithDuration:0.3
-                             animations:^() {
-                                 [obj setAlpha:1];
-                             }];
-        }];
-    }
+    [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
+        [UIView animateWithDuration:0.3
+                         animations:^() {
+                             [obj setAlpha:1];
+                         }];
+    }];
 }
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
