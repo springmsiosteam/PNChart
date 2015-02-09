@@ -168,6 +168,9 @@
             [_descriptionLabels addObject:descriptionLabel];
         }
     }
+
+    if (animated)
+        [self maskChart];
 }
 
 - (UILabel*)descriptionLabelForItemAtIndex:(NSUInteger)index
@@ -296,37 +299,31 @@
     circle.strokeEnd = endPercentage;
     circle.lineWidth = borderWidth + 3;
     circle.opacity = 0.1;
-
     circle.path = path.CGPath;
-
-    CIFilter* blur = [CIFilter filterWithName:@"CIGaussianBlur"];
-    [blur setDefaults];
-    [blur setValue:[NSNumber numberWithFloat:10.0] forKey:@"inputRadius"];
-    circle.backgroundFilters = [NSArray arrayWithObject:blur];
 
     return circle;
 }
 
 - (void)maskChart
 {
-    CAShapeLayer* maskLayer =
-        [self newCircleLayerWithRadius:_innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2
-                           borderWidth:_outerCircleRadius - _innerCircleRadius
-                             fillColor:[UIColor clearColor]
-                           borderColor:[UIColor blackColor]
-                       startPercentage:0
-                         endPercentage:1
-                                 index:0];
 
-    _pieLayer.mask = maskLayer;
-    CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    animation.duration = _duration;
-    animation.fromValue = @0;
-    animation.toValue = @1;
-    animation.delegate = self;
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    animation.removedOnCompletion = YES;
-    [maskLayer addAnimation:animation forKey:@"circleAnimation"];
+    [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CAShapeLayer* obj, NSUInteger idx, BOOL* stop) {
+
+        CGFloat end = obj.strokeEnd;
+
+        obj.strokeEnd = 0;
+
+        [self createArcAnimationForLayer:obj
+                                  ForKey:@"strokeEnd"
+                               fromValue:@(obj.strokeStart)
+                                 toValue:@(end)
+                                Delegate:self];
+
+    }];
+
+    [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
+        [obj setAlpha:0];
+    }];
 }
 
 - (void)createArcAnimationForLayer:(CAShapeLayer*)layer
@@ -337,21 +334,27 @@
 {
     CABasicAnimation* arcAnimation = [CABasicAnimation animationWithKeyPath:key];
     arcAnimation.fromValue = @0;
+
     [arcAnimation setToValue:to];
     [arcAnimation setDelegate:delegate];
-    [arcAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault]];
+    [arcAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+    [arcAnimation setDuration:0.3];
     [layer addAnimation:arcAnimation forKey:key];
     [layer setValue:to forKey:key];
 }
 
 - (void)animationDidStop:(CAAnimation*)anim finished:(BOOL)flag
 {
-    [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
-        [UIView animateWithDuration:0.2
-                         animations:^() {
-                             [obj setAlpha:1];
-                         }];
-    }];
+
+    if ([anim valueForKey:@"strokeEnd"])
+    {
+        [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
+            [UIView animateWithDuration:0.3
+                             animations:^() {
+                                 [obj setAlpha:1];
+                             }];
+        }];
+    }
 }
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -387,7 +390,29 @@
     }];
 
     if (clickeIndex != -1)
+    {
+        [self animateTappedLayer:clickeIndex];
         [self.delegate userClickedOnPieSliceAtIndex:clickeIndex];
+    }
+}
+
+- (void)animateTappedLayer:(NSUInteger)index
+{
+    CAShapeLayer* tappedLayer = [[_pieLayer sublayers] objectAtIndex:index];
+    UIColor* newColor = [UIColor colorWithCGColor:tappedLayer.strokeColor];
+
+    float hue, sat, brigth, alpha;
+
+    [newColor getHue:&hue saturation:&sat brightness:&brigth alpha:&alpha];
+    newColor = [UIColor colorWithHue:hue saturation:sat brightness:fminf(brigth + 0.10, 0.95) alpha:alpha];
+
+    CABasicAnimation* fillColorAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
+    fillColorAnimation.duration = 0.08f;
+    fillColorAnimation.fromValue = (id)tappedLayer.strokeColor;
+    fillColorAnimation.toValue = (id)[newColor CGColor];
+    fillColorAnimation.repeatCount = 1;
+    fillColorAnimation.autoreverses = YES;
+    [tappedLayer addAnimation:fillColorAnimation forKey:@"strokeColor"];
 }
 
 @end

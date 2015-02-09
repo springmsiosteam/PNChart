@@ -119,6 +119,7 @@
         self.pieChart.descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:11.0];
         self.pieChart.descriptionTextShadowColor = [UIColor clearColor];
         self.pieChart.labelPosition = PNPieChartLabelPositionInner;
+        self.pieChart.selectedIndex = INT32_MAX;
         [self.pieChart strokeChart:NO];
         self.pieChart.delegate = self;
 
@@ -268,9 +269,9 @@
 {
 
     NSLog(@"Click on PieSlice %@", @(pieSliceIndex));
-
-    [self.pieChart setSelectedIndex:pieSliceIndex];
-    [self.pieChart strokeChart:NO];
+    //
+    //    [self.pieChart setSelectedIndex:pieSliceIndex];
+    //    [self.pieChart strokeChart:NO];
 }
 
 /* this function is used only for creating random points */
