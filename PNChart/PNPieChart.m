@@ -134,19 +134,6 @@
                                      index:i];
         [_pieLayer addSublayer:currentPieLayer];
 
-        if (i == self.selectedIndex)
-        {
-            CAShapeLayer* shadown =
-                [self shadowCircleLayerWithRadius:_innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2
-                                      borderWidth:_outerCircleRadius - _innerCircleRadius
-                                        fillColor:[UIColor clearColor]
-                                      borderColor:currentItem.color
-                                  startPercentage:startPercnetage
-                                    endPercentage:endPercentage
-                                            index:i];
-            [_pieLayer addSublayer:shadown];
-        }
-
         _currentTotal += currentItem.value;
         [_pieLayer addSublayer:currentPieLayer];
 
@@ -166,6 +153,9 @@
             [_descriptionLabels addObject:descriptionLabel];
         }
     }
+
+    if (animated)
+        [self maskChart];
 }
 
 - (UILabel*)descriptionLabelForItemAtIndex:(NSUInteger)index
@@ -263,42 +253,6 @@
     return circle;
 }
 
-- (CAShapeLayer*)shadowCircleLayerWithRadius:(CGFloat)radius
-                                 borderWidth:(CGFloat)borderWidth
-                                   fillColor:(UIColor*)fillColor
-                                 borderColor:(UIColor*)borderColor
-                             startPercentage:(CGFloat)startPercentage
-                               endPercentage:(CGFloat)endPercentage
-                                       index:(NSUInteger)index
-{
-    CAShapeLayer* circle = [CAShapeLayer layer];
-
-    PNPieChartDataItem* currentDataItem = [self dataItemForIndex:index];
-
-    CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-
-    CGFloat distance = 15.0f;
-    CGFloat centerPercentage = (_currentTotal + currentDataItem.value / 2) / _total;
-    CGFloat rad = centerPercentage * 2 * M_PI;
-    CGPoint newCenter = CGPointMake(center.x + distance * sin(rad), center.y - distance * cos(rad));
-
-    UIBezierPath* path = [UIBezierPath bezierPathWithArcCenter:newCenter
-                                                        radius:radius
-                                                    startAngle:-M_PI_2
-                                                      endAngle:M_PI_2 * 3
-                                                     clockwise:YES];
-
-    circle.fillColor = fillColor.CGColor;
-    circle.strokeColor = [UIColor darkGrayColor].CGColor;
-    circle.strokeStart = startPercentage;
-    circle.strokeEnd = endPercentage;
-    circle.lineWidth = borderWidth + 3;
-    circle.opacity = 0.1;
-    circle.path = path.CGPath;
-
-    return circle;
-}
-
 - (void)maskChart
 {
 
@@ -340,12 +294,20 @@
 
 - (void)animationDidStop:(CAAnimation*)anim finished:(BOOL)flag
 {
-    [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
-        [UIView animateWithDuration:0.3
-                         animations:^() {
-                             [obj setAlpha:1];
-                         }];
-    }];
+    NSNumber* tappedIndex = [anim valueForKey:@"tappedIndex"];
+    if (tappedIndex)
+    {
+        [self.delegate userClickedOnPieSliceAtIndex:[tappedIndex intValue]];
+    }
+    else
+    {
+        [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
+            [UIView animateWithDuration:0.3
+                             animations:^() {
+                                 [obj setAlpha:1];
+                             }];
+        }];
+    }
 }
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
@@ -383,7 +345,6 @@
     if (clickeIndex != -1)
     {
         [self animateTappedLayer:clickeIndex];
-        [self.delegate userClickedOnPieSliceAtIndex:clickeIndex];
     }
 }
 
@@ -403,6 +364,10 @@
     fillColorAnimation.toValue = (id)[newColor CGColor];
     fillColorAnimation.repeatCount = 1;
     fillColorAnimation.autoreverses = YES;
+    fillColorAnimation.delegate = self;
+    fillColorAnimation.removedOnCompletion = YES;
+    [fillColorAnimation setValue:@(index) forKey:@"tappedIndex"];
+
     [tappedLayer addAnimation:fillColorAnimation forKey:@"strokeColor"];
 }
 
