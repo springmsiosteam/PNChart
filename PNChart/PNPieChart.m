@@ -8,6 +8,8 @@
 
 #import "PNPieChart.h"
 
+#define SELECTION_OFFSET 15
+
 @interface PNPieChart ()
 
 @property (nonatomic) CGFloat total;
@@ -43,7 +45,7 @@
         _items = [NSArray array];
 
         _descriptionTextColor = [UIColor whiteColor];
-        _descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:18.0];
+        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:15];
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
@@ -54,13 +56,13 @@
 
 - (id)initWithFrame:(CGRect)frame items:(NSArray*)items
 {
-    self = [self initWithFrame:frame];
+    self = [super initWithFrame:frame];
     if (self)
     {
         _items = [NSArray arrayWithArray:items];
 
         _descriptionTextColor = [UIColor whiteColor];
-        _descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:18.0];
+        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:15];
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
@@ -77,7 +79,7 @@
     _outerCircleRadius = MIN(self.bounds.size.height, self.bounds.size.width) / 2;
 
     _innerCircleRadius = 0;
-    if (_chartType)
+    if (_chartType == PNPieChartTypeDonut)
     {
         _innerCircleRadius = (_outerCircleRadius / 2);
     }
@@ -105,11 +107,10 @@
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
-            _outerCircleRadius -= [_descriptionTextFont pointSize] + 20;
+            _outerCircleRadius -= [_descriptionTextFont pointSize];
             break;
 
         default:
-            // _outerCircleRadius = _outerCircleRadius;
             break;
     }
 
@@ -124,14 +125,16 @@
         CGFloat startPercnetage = currentValue / _total;
         CGFloat endPercentage = (currentValue + currentItem.value) / _total;
 
-        CAShapeLayer* currentPieLayer =
-            [self newCircleLayerWithRadius:_innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2
-                               borderWidth:_outerCircleRadius - _innerCircleRadius
-                                 fillColor:[UIColor clearColor]
-                               borderColor:currentItem.color
-                           startPercentage:startPercnetage
-                             endPercentage:endPercentage
-                                     index:i];
+        float radius = _innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2;
+        float barderWidth = abs(_outerCircleRadius - _innerCircleRadius);
+
+        CAShapeLayer* currentPieLayer = [self newCircleLayerWithRadius:radius
+                                                           borderWidth:barderWidth
+                                                             fillColor:[UIColor clearColor]
+                                                           borderColor:currentItem.color
+                                                       startPercentage:startPercnetage
+                                                         endPercentage:endPercentage
+                                                                 index:i];
         [_pieLayer addSublayer:currentPieLayer];
 
         _currentTotal += currentItem.value;
@@ -151,6 +154,7 @@
             [_contentView addSubview:descriptionLabel];
             currentValue += currentItem.value;
             [_descriptionLabels addObject:descriptionLabel];
+            // descriptionLabel.backgroundColor = [UIColor purpleColor];
         }
     }
 
@@ -176,18 +180,20 @@
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
-            distance = _outerCircleRadius + (labelSize.width / 2) + 5 + (index == self.selectedIndex ? 15 : 0);
+            distance = _outerCircleRadius + (labelSize.width / 2)
+                + (index == self.selectedIndex ? SELECTION_OFFSET : 0);
             break;
 
         default:
             if (_chartType == PNPieChartTypeDonut)
             {
-                distance = (index == self.selectedIndex ? 15 : 0) + _innerCircleRadius
+                distance = (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _innerCircleRadius
                     + (_outerCircleRadius - _innerCircleRadius) / 2;
             }
             else
             {
-                distance = (index == self.selectedIndex ? 15 : 0) + _outerCircleRadius - (_outerCircleRadius / 5);
+                distance = (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _outerCircleRadius
+                    - (_outerCircleRadius / 3);
             }
 
             break;
@@ -204,6 +210,10 @@
     descriptionLabel.text = titleText;
     descriptionLabel.font = _descriptionTextFont;
     descriptionLabel.center = center;
+    descriptionLabel.minimumScaleFactor = 0.5;
+    descriptionLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
+
+    [descriptionLabel sizeToFit];
     return descriptionLabel;
 }
 
