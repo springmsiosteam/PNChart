@@ -45,7 +45,7 @@
         _items = [NSArray array];
 
         _descriptionTextColor = [UIColor whiteColor];
-        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:15];
+        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:14];
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
@@ -62,7 +62,7 @@
         _items = [NSArray arrayWithArray:items];
 
         _descriptionTextColor = [UIColor whiteColor];
-        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:15];
+        _descriptionTextFont = [UIFont fontWithName:@"Helvetica" size:14];
         _descriptionTextShadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.4];
         _descriptionTextShadowOffset = CGSizeMake(0, 1);
         _duration = 1.0;
@@ -180,19 +180,19 @@
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
-            distance = _outerCircleRadius + (labelSize.width / 2)
+            distance += _outerCircleRadius + (labelSize.width / 2)
                 + (index == self.selectedIndex ? SELECTION_OFFSET : 0);
             break;
 
         default:
             if (_chartType == PNPieChartTypeDonut)
             {
-                distance = (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _innerCircleRadius
+                distance += (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _innerCircleRadius
                     + (_outerCircleRadius - _innerCircleRadius) / 2;
             }
             else
             {
-                distance = (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _outerCircleRadius
+                distance += (index == self.selectedIndex ? SELECTION_OFFSET : 0) + _outerCircleRadius
                     - (_outerCircleRadius / 3);
             }
 
@@ -200,8 +200,8 @@
     }
 
     CGPoint center = CGPointMake(chartCenter.x + distance * sin(rad), chartCenter.y - distance * cos(rad));
-    UILabel* descriptionLabel =
-        [[UILabel alloc] initWithFrame:CGRectMake(center.x, center.y, labelSize.width, labelSize.height)];
+    UILabel* descriptionLabel = [[UILabel alloc]
+        initWithFrame:CGRectIntegral(CGRectMake(center.x, center.y, labelSize.width, labelSize.height))];
     descriptionLabel.numberOfLines = 0;
     descriptionLabel.textColor = _descriptionTextColor;
     descriptionLabel.textAlignment = NSTextAlignmentCenter;
@@ -210,10 +210,12 @@
     descriptionLabel.text = titleText;
     descriptionLabel.font = _descriptionTextFont;
     descriptionLabel.center = center;
-    descriptionLabel.minimumScaleFactor = 0.5;
     descriptionLabel.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
 
     [descriptionLabel sizeToFit];
+
+    descriptionLabel.frame = CGRectIntegral(descriptionLabel.frame);
+
     return descriptionLabel;
 }
 
