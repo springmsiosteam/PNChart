@@ -118,7 +118,7 @@
         self.pieChart.descriptionTextColor = [UIColor blackColor];
         self.pieChart.descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:11.0];
         self.pieChart.descriptionTextShadowColor = [UIColor clearColor];
-        self.pieChart.labelPosition = PNPieChartLabelPositionOuter;
+        self.pieChart.labelPosition = PNPieChartLabelPositionInner;
         self.pieChart.selectedIndex = INT32_MAX;
         self.pieChart.backgroundColor = [UIColor clearColor];
         [self.pieChart strokeChart:NO];
