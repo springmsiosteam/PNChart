@@ -108,18 +108,19 @@
         self.titleLabel.text = @"Pie Chart";
 
         NSArray* items = @[
-            [PNPieChartDataItem dataItemWithValue:10 color:PNLightGreen],
+            [PNPieChartDataItem dataItemWithValue:10 color:PNLightGreen description:@"Microsoft Conect"],
             [PNPieChartDataItem dataItemWithValue:20 color:PNFreshGreen description:@"WWDC"],
-            [PNPieChartDataItem dataItemWithValue:40 color:PNDeepGreen description:@"GOOG I/O"],
+            [PNPieChartDataItem dataItemWithValue:30 color:PNDeepGreen description:@"GOOG I/O"],
         ];
 
         self.pieChart =
             [[PNPieChart alloc] initWithFrame:CGRectMake(SCREEN_WIDTH / 2.0 - 100, 135, 300, 300) items:items];
-        self.pieChart.descriptionTextColor = [UIColor whiteColor];
+        self.pieChart.descriptionTextColor = [UIColor blackColor];
         self.pieChart.descriptionTextFont = [UIFont fontWithName:@"Avenir-Medium" size:11.0];
         self.pieChart.descriptionTextShadowColor = [UIColor clearColor];
-        self.pieChart.labelPosition = PNPieChartLabelPositionInner;
+        self.pieChart.labelPosition = PNPieChartLabelPositionOuter;
         self.pieChart.selectedIndex = INT32_MAX;
+        self.pieChart.backgroundColor = [UIColor clearColor];
         [self.pieChart strokeChart:NO];
         self.pieChart.delegate = self;
 
@@ -269,9 +270,9 @@
 {
 
     NSLog(@"Click on PieSlice %@", @(pieSliceIndex));
-    //
-    //    [self.pieChart setSelectedIndex:pieSliceIndex];
-    //    [self.pieChart strokeChart:NO];
+
+    [self.pieChart setSelectedIndex:pieSliceIndex];
+    [self.pieChart strokeChart:NO];
 }
 
 /* this function is used only for creating random points */
