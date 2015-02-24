@@ -180,14 +180,16 @@
     _currentTotal += currentDataItem.value;
 
     CGSize labelSize = [titleText sizeWithAttributes:@{ NSFontAttributeName : _descriptionTextFont }];
-    CGFloat offset = (index == self.selectedIndex ? SELECTION_OFFSET : 0);
+
+    CGFloat offset = MIN((index == self.selectedIndex ? SELECTION_OFFSET : 0), MAX((_outerCircleRadius / 10), 1));
     CGPoint center = CGPointZero;
-    
+
     switch (_labelPosition)
     {
         case PNPieChartLabelPositionOuter:
             distance = _outerCircleRadius;
-            center = CGPointMake(chartCenter.x + (distance + offset) * sin(rad), chartCenter.y - (distance + offset) * cos(rad));
+            center = CGPointMake(
+                chartCenter.x + (distance + offset) * sin(rad), chartCenter.y - (distance + offset) * cos(rad));
             center.x += (labelSize.width / 2) * signum(sin(rad));
             center.y -= (labelSize.height / 2) * signum(cos(rad));
             break;
@@ -201,11 +203,10 @@
             {
                 distance = _outerCircleRadius - (_outerCircleRadius / 3);
             }
-            center = CGPointMake(chartCenter.x + (distance + offset) * sin(rad), chartCenter.y - (distance + offset) * cos(rad));
+            center = CGPointMake(
+                chartCenter.x + (distance + offset) * sin(rad), chartCenter.y - (distance + offset) * cos(rad));
             break;
     }
-
-
 
     UILabel* descriptionLabel = [[UILabel alloc]
         initWithFrame:CGRectIntegral(CGRectMake(center.x, center.y, labelSize.width, labelSize.height))];
@@ -250,7 +251,7 @@
     CGFloat distance = 0;
     if (index == self.selectedIndex)
     {
-        distance += SELECTION_OFFSET;
+        distance += MIN(SELECTION_OFFSET, MAX((_outerCircleRadius / 10), 1));
     }
 
     CGFloat centerPercentage = (_currentTotal + currentDataItem.value / 2) / _total;
