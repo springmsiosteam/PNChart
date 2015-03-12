@@ -103,6 +103,11 @@
     [self.items enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
         _total += ((PNPieChartDataItem*)obj).value;
     }];
+    
+    if (_total == 0)
+    {
+        return;
+    }
 
     switch (_labelPosition)
     {
