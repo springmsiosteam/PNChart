@@ -74,7 +74,7 @@
     {
         PNChartLabel* minLabel =
             [[PNChartLabel alloc] initWithFrame:CGRectMake(0.0, (NSInteger)_chartCavanHeight, (NSInteger)_chartMargin,
-                                                           (NSInteger)_yLabelHeight)];
+                                                    (NSInteger)_yLabelHeight)];
         minLabel.text = [NSString stringWithFormat:yLabelFormat, 0.0];
         [self setCustomStyleForYLabel:minLabel];
         [self addSubview:minLabel];
@@ -82,7 +82,7 @@
 
         PNChartLabel* midLabel =
             [[PNChartLabel alloc] initWithFrame:CGRectMake(0.0, (NSInteger)(_chartCavanHeight / 2),
-                                                           (NSInteger)_chartMargin, (NSInteger)_yLabelHeight)];
+                                                    (NSInteger)_chartMargin, (NSInteger)_yLabelHeight)];
         midLabel.text = [NSString stringWithFormat:yLabelFormat, _yValueMax];
         [self setCustomStyleForYLabel:midLabel];
         [self addSubview:midLabel];
@@ -104,7 +104,7 @@
         {
             PNChartLabel* label = [[PNChartLabel alloc]
                 initWithFrame:CGRectMake(0.0, (NSInteger)(_chartCavanHeight - index * yStepHeight),
-                                         (NSInteger)_chartMargin, (NSInteger)_yLabelHeight)];
+                                  (NSInteger)_chartMargin, (NSInteger)_yLabelHeight)];
             [label setTextAlignment:NSTextAlignmentRight];
             label.text = [NSString stringWithFormat:yLabelFormat, _yValueMin + (yStep * index)];
             [self setCustomStyleForYLabel:label];
@@ -226,7 +226,7 @@
             CGPoint p2 = [linePointsArray[i + 1] CGPointValue];
 
             // Closest distance from point to line
-            float distance = fabsf(((p2.x - p1.x) * (touchPoint.y - p1.y)) - ((p1.x - touchPoint.x) * (p1.y - p2.y)));
+            float distance = fabs(((p2.x - p1.x) * (touchPoint.y - p1.y)) - ((p1.x - touchPoint.x) * (p1.y - p2.y)));
             distance /= hypot(p2.x - p1.x, p1.y - p2.y);
 
             if (distance <= 5.0)
@@ -263,7 +263,7 @@
             CGPoint p1 = [linePointsArray[i] CGPointValue];
             CGPoint p2 = [linePointsArray[i + 1] CGPointValue];
 
-            float distanceToP1 = fabsf(hypot(touchPoint.x - p1.x, touchPoint.y - p1.y));
+            float distanceToP1 = fabs(hypot(touchPoint.x - p1.x, touchPoint.y - p1.y));
             float distanceToP2 = hypot(touchPoint.x - p2.x, touchPoint.y - p2.y);
 
             float distance = MIN(distanceToP1, distanceToP2);
@@ -394,7 +394,7 @@
                 CGRect circleRect
                     = CGRectMake(x - inflexionWidth / 2, y - inflexionWidth / 2, inflexionWidth, inflexionWidth);
                 CGPoint circleCenter = CGPointMake(circleRect.origin.x + (circleRect.size.width / 2),
-                                                   circleRect.origin.y + (circleRect.size.height / 2));
+                    circleRect.origin.y + (circleRect.size.height / 2));
 
                 [pointPath moveToPoint:CGPointMake(circleCenter.x + (inflexionWidth / 2), circleCenter.y)];
                 [pointPath addArcWithCenter:circleCenter
@@ -427,16 +427,16 @@
                 CGRect squareRect
                     = CGRectMake(x - inflexionWidth / 2, y - inflexionWidth / 2, inflexionWidth, inflexionWidth);
                 CGPoint squareCenter = CGPointMake(squareRect.origin.x + (squareRect.size.width / 2),
-                                                   squareRect.origin.y + (squareRect.size.height / 2));
+                    squareRect.origin.y + (squareRect.size.height / 2));
 
                 [pointPath moveToPoint:CGPointMake(squareCenter.x - (inflexionWidth / 2),
-                                                   squareCenter.y - (inflexionWidth / 2))];
+                                           squareCenter.y - (inflexionWidth / 2))];
                 [pointPath addLineToPoint:CGPointMake(squareCenter.x + (inflexionWidth / 2),
-                                                      squareCenter.y - (inflexionWidth / 2))];
+                                              squareCenter.y - (inflexionWidth / 2))];
                 [pointPath addLineToPoint:CGPointMake(squareCenter.x + (inflexionWidth / 2),
-                                                      squareCenter.y + (inflexionWidth / 2))];
+                                              squareCenter.y + (inflexionWidth / 2))];
                 [pointPath addLineToPoint:CGPointMake(squareCenter.x - (inflexionWidth / 2),
-                                                      squareCenter.y + (inflexionWidth / 2))];
+                                              squareCenter.y + (inflexionWidth / 2))];
                 [pointPath closePath];
 
                 if (i != 0)
@@ -465,8 +465,8 @@
 
                 CGPoint startPoint = CGPointMake(squareRect.origin.x, squareRect.origin.y + squareRect.size.height);
                 CGPoint endPoint = CGPointMake(squareRect.origin.x + (squareRect.size.width / 2), squareRect.origin.y);
-                CGPoint middlePoint = CGPointMake(squareRect.origin.x + (squareRect.size.width),
-                                                  squareRect.origin.y + squareRect.size.height);
+                CGPoint middlePoint = CGPointMake(
+                    squareRect.origin.x + (squareRect.size.width), squareRect.origin.y + squareRect.size.height);
 
                 [pointPath moveToPoint:startPoint];
                 [pointPath addLineToPoint:middlePoint];
@@ -690,8 +690,8 @@
             CGFloat yStepHeight = _chartCavanHeight / _yLabelNum;
             for (NSUInteger i = 0; i < [self.xLabels count]; i++)
             {
-                point = CGPointMake(_chartMargin + yAxisOffset,
-                                    (_chartCavanHeight - i * yStepHeight + _yLabelHeight / 2));
+                point = CGPointMake(
+                    _chartMargin + yAxisOffset, (_chartCavanHeight - i * yStepHeight + _yLabelHeight / 2));
                 CGContextMoveToPoint(ctx, point.x, point.y);
                 CGContextAddLineToPoint(ctx, point.x + 2, point.y);
                 CGContextStrokePath(ctx);
@@ -712,8 +712,8 @@
         if ([self.xUnit length])
         {
             CGFloat height = [PNLineChart heightOfString:self.xUnit withWidth:30.f font:font];
-            CGRect drawRect = CGRectMake(CGRectGetWidth(rect) - _chartMargin + 5,
-                                         _chartMargin + _chartCavanHeight - height / 2, 25.f, height);
+            CGRect drawRect = CGRectMake(
+                CGRectGetWidth(rect) - _chartMargin + 5, _chartMargin + _chartCavanHeight - height / 2, 25.f, height);
             [self drawTextInContext:ctx text:self.xUnit inRect:drawRect font:font];
         }
     }

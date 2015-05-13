@@ -103,7 +103,7 @@
     [self.items enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
         _total += ((PNPieChartDataItem*)obj).value;
     }];
-    
+
     if (_total == 0)
     {
         return;
@@ -131,7 +131,7 @@
         CGFloat endPercentage = (currentValue + currentItem.value) / _total;
 
         float radius = _innerCircleRadius + (_outerCircleRadius - _innerCircleRadius) / 2;
-        float barderWidth = abs(_outerCircleRadius - _innerCircleRadius);
+        float barderWidth = fabs(_outerCircleRadius - _innerCircleRadius);
 
         CAShapeLayer* currentPieLayer = [self newCircleLayerWithRadius:radius
                                                            borderWidth:barderWidth
@@ -378,7 +378,7 @@
     CAShapeLayer* tappedLayer = [[_pieLayer sublayers] objectAtIndex:index];
     UIColor* newColor = [UIColor colorWithCGColor:tappedLayer.strokeColor];
 
-    float hue, sat, brigth, alpha;
+    CGFloat hue, sat, brigth, alpha;
 
     [newColor getHue:&hue saturation:&sat brightness:&brigth alpha:&alpha];
     newColor = [UIColor colorWithHue:hue saturation:sat brightness:fminf(brigth + 0.10, 0.95) alpha:alpha];
