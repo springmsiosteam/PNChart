@@ -280,19 +280,20 @@
 
 - (void)maskChart
 {
+      [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CALayer * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj isKindOfClass:[CAShapeLayer class]])
+            {
+                CAShapeLayer* layer = (CAShapeLayer*)obj;
+                CGFloat end = layer.strokeEnd;
 
-    [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CAShapeLayer* obj, NSUInteger idx, BOOL* stop) {
+                layer.strokeEnd = 0;
 
-        CGFloat end = obj.strokeEnd;
-
-        obj.strokeEnd = 0;
-
-        [self createArcAnimationForLayer:obj
+                [self createArcAnimationForLayer:layer
                                   ForKey:@"strokeEnd"
-                               fromValue:@(obj.strokeStart)
+                                       fromValue:@(layer.strokeStart)
                                  toValue:@(end)
                                 Delegate:self];
-
+            }
     }];
 
     [_descriptionLabels enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL* stop) {
@@ -375,7 +376,7 @@
 
 - (void)animateTappedLayer:(NSUInteger)index
 {
-    CAShapeLayer* tappedLayer = [[_pieLayer sublayers] objectAtIndex:index];
+    CAShapeLayer* tappedLayer = (CAShapeLayer*)[[_pieLayer sublayers] objectAtIndex:index];
     UIColor* newColor = [UIColor colorWithCGColor:tappedLayer.strokeColor];
 
     CGFloat hue, sat, brigth, alpha;
