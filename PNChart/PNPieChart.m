@@ -280,7 +280,7 @@
 
 - (void)maskChart
 {
-      [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CALayer * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+      [_pieLayer.sublayers enumerateObjectsUsingBlock:^(CALayer * obj, NSUInteger idx, BOOL *stop) {
             if ([obj isKindOfClass:[CAShapeLayer class]])
             {
                 CAShapeLayer* layer = (CAShapeLayer*)obj;
