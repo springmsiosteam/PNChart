@@ -23,7 +23,7 @@ typedef enum
     PNPieChartTypeDonut = 1
 } PNPieChartType;
 
-@interface PNPieChart : UIControl
+@interface PNPieChart : UIControl<CAAnimationDelegate>
 
 - (id)initWithFrame:(CGRect)frame items:(NSArray*)items;
 
